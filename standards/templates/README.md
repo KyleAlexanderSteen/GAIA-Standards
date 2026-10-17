@@ -12,3 +12,9 @@ Source patterns: legacy GAIA-3.0 `.github/ISSUE_TEMPLATE/` and `PULL_REQUEST_TEM
 - A PR must list the stages it actually reaches and provide evidence for each.
 - Stubs fail loudly. Description never grants authority.
 - `Closes` is allowed only when OPERATIONAL evidence exists and acceptance criteria are met.
+
+## Tests
+
+```bash
+python -m unittest standards/templates/test_templates.py
+```
