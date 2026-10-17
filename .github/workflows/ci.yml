@@ -181,3 +181,26 @@ jobs:
           python-version: "3.12"
       - name: Independent verification
         run: python docs/verify_five_domains.py
+
+  gaian-registry:
+    name: GAIAN Registry schema tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run GAIAN registry validator tests
+        run: python -m unittest standards/gaian-registry/test_validate_record.py
+
+  gaian-registry-verify:
+    name: GAIAN Registry verification
+    runs-on: ubuntu-latest
+    needs: [gaian-registry]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Independent verification
+        run: python standards/gaian-registry/verify.py
