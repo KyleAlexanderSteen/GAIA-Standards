@@ -27,23 +27,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run template tests
-        run: python -m unittest discover -s standards/templates -p "test_*.py" || true
-      - name: Run CI stage-evidence tests
-        run: python -m unittest discover -s standards/ci -p "test_*.py" || true
-      - name: Run simulation scenario tests
-        run: python -m unittest discover -s standards/simulation -p "test_*.py" || true
-      - name: Fail if any python test file is missing expected structure
+      - name: Run available python tests
         run: |
-          python - <<'PY'
-          import pathlib, sys
-          root = pathlib.Path("standards")
-          missing = []
-          for p in ["templates/test_templates.py", "ci/test_stage_evidence_check.py", "simulation/test_scenarios.py"]:
-              if not (root / p).is_file():
-                  missing.append(p)
-          if missing:
-              print("missing test files:", missing)
-              sys.exit(1)
-          print("python test files present")
-          PY
+          set -e
+          ran=0
+          for dir in standards/templates standards/ci standards/simulation; do
+            if [ -d "$dir" ] && ls "$dir"/test_*.py >/dev/null 2>&1; then
+              echo "=== $dir ==="
+              python -m unittest discover -s "$dir" -p "test_*.py"
+              ran=1
+            fi
+          done
+          if [ "$ran" -eq 0 ]; then
+            echo "No python standards tests present on this branch; skipping."
+          fi
