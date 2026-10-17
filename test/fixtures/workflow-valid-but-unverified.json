@@ -1,0 +1,79 @@
+{
+  "apiVersion": "gaia.dev/v1",
+  "kind": "WorkflowManifest",
+  "metadata": {
+    "id": "WF-EXAMPLE-001",
+    "name": "Fixture workflow",
+    "version": "1.0.0",
+    "owner": "owner-id-not-attested",
+    "domain": "general",
+    "supersedes": null
+  },
+  "spec": {
+    "scope": {
+      "exempt": false,
+      "justification": null,
+      "approver": null
+    },
+    "goal": {
+      "statement": "Validate a local workflow manifest",
+      "acceptance_tests": [
+        {
+          "id": "AT-001",
+          "statement": "The validator returns a deterministic blocked report for identical inputs.",
+          "falsifiable": true
+        }
+      ],
+      "non_goals": [
+        "This fixture does not authorize production release."
+      ]
+    },
+    "inputs": [
+      {
+        "id": "IN-001",
+        "schema_uri": "schemas/input.v1.json",
+        "version": "1.0.0"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "OUT-001",
+        "schema_uri": "schemas/output.v1.json",
+        "version": "1.0.0"
+      }
+    ]
+  },
+  "controls": {
+    "provenance": {
+      "applicable": true
+    },
+    "versioning": {
+      "applicable": true
+    },
+    "testing": {
+      "applicable": true
+    },
+    "security": {
+      "applicable": true
+    },
+    "privacy": {
+      "applicable": true
+    },
+    "human_approval": {
+      "applicable": true
+    },
+    "observability": {
+      "applicable": true
+    },
+    "resilience": {
+      "applicable": true
+    },
+    "learning": {
+      "applicable": true
+    }
+  },
+  "status": {
+    "state": "draft"
+  },
+  "waivers": []
+}

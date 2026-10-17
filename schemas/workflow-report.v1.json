@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gaia.dev/schemas/workflow-report.v1.json",
+  "title": "GAIA Universal Workflow Gate Report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "reportVersion",
+    "evaluatedAt",
+    "manifestId",
+    "manifestVersion",
+    "verdict",
+    "layers",
+    "findings",
+    "hashes",
+    "limitations"
+  ],
+  "properties": {
+    "reportVersion": {
+      "const": "1.0.0"
+    },
+    "evaluatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "manifestId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "manifestVersion": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "verdict": {
+      "enum": [
+        "invalid",
+        "blocked",
+        "unverified",
+        "not_applicable",
+        "passed",
+        "release_authorized"
+      ]
+    },
+    "layers": {
+      "type": "object",
+      "required": [
+        "structuralValidity",
+        "evidenceValidity",
+        "policyCompliance",
+        "releaseAuthorization"
+      ],
+      "properties": {
+        "structuralValidity": {
+          "enum": [
+            "valid",
+            "invalid"
+          ]
+        },
+        "evidenceValidity": {
+          "enum": [
+            "unverified",
+            "valid",
+            "invalid",
+            "not-evaluated"
+          ]
+        },
+        "policyCompliance": {
+          "enum": [
+            "blocked",
+            "unverified",
+            "compliant",
+            "not-evaluated"
+          ]
+        },
+        "releaseAuthorization": {
+          "const": "not-authorized"
+        }
+      },
+      "additionalProperties": false
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "ruleId",
+          "severity",
+          "message"
+        ],
+        "properties": {
+          "ruleId": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "error",
+              "blocking",
+              "warning",
+              "info"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "controlResults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "state"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "not_applicable",
+              "waived",
+              "passed",
+              "unverified",
+              "failed"
+            ]
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "hashes": {
+      "type": "object",
+      "required": [
+        "validator",
+        "schema",
+        "registry",
+        "manifest"
+      ],
+      "properties": {
+        "validator": {
+          "type": "string"
+        },
+        "schema": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "registry": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifest": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
