@@ -30,3 +30,9 @@ The legacy `pr-lifecycle.yml` and `tools/agent-skills/pr_lifecycle_check.py` alr
 ## Minimal reference script
 
 See `stage_evidence_check.py` in this directory. It is a starting point only; it does not replace repository-specific lifecycle tools.
+
+## Tests
+
+```bash
+python -m unittest standards/ci/test_stage_evidence_check.py
+```
