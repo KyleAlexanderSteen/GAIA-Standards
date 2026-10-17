@@ -158,3 +158,26 @@ jobs:
           test -f .github/workflows/ci.yml
           test -f package.json
           echo "CI verification: PASS"
+
+  five-domains:
+    name: Five-domains document tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run five-domains structure tests
+        run: python -m unittest docs/test_five_domains.py
+
+  five-domains-verify:
+    name: Five-domains verification
+    runs-on: ubuntu-latest
+    needs: [five-domains]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Independent verification
+        run: python docs/verify_five_domains.py
