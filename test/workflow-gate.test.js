@@ -71,3 +71,20 @@ test("a deliberate invariant mutation is detected", async () => {
   assert.equal(report.verdict, "invalid");
   assert.ok(report.findings.some((f) => f.ruleId === "SCHEMA-012"));
 });
+
+test("duplicate acceptance-test IDs are rejected", async () => {
+  const source = JSON.parse(await fixture("workflow-valid-but-unverified.json"));
+  source.spec.goal.acceptance_tests.push({ ...source.spec.goal.acceptance_tests[0], statement: "A second test reusing the same ID." });
+  const report = await evaluateWorkflowManifest({ manifestText: JSON.stringify(source), evaluationTime: time });
+  assert.equal(report.verdict, "invalid");
+  assert.ok(report.findings.some((f) => f.ruleId === "REF-002"));
+});
+
+test("declared-state mismatch invalidates the verdict without mislabeling structure", async () => {
+  const source = JSON.parse(await fixture("workflow-valid-but-unverified.json"));
+  source.status.state = "passed";
+  const report = await evaluateWorkflowManifest({ manifestText: JSON.stringify(source), evaluationTime: time });
+  assert.equal(report.verdict, "invalid");
+  assert.equal(report.layers.structuralValidity, "valid");
+  assert.ok(report.findings.some((f) => f.ruleId === "STATE-001"));
+});

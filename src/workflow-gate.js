@@ -100,7 +100,7 @@ export async function evaluateWorkflowManifest({ manifestText, evaluationTime })
     manifestVersion: isObject(manifest) && nonEmpty(manifest.metadata?.version) ? manifest.metadata.version : null,
     verdict: finalVerdict,
     layers: {
-      structuralValidity: structuralValid && !hasError() ? "valid" : "invalid",
+      structuralValidity: structuralValid ? "valid" : "invalid",
       evidenceValidity: !structuralValid ? "not-evaluated" : findings.some((item) => item.ruleId.startsWith("EVID-")) ? "unverified" : "valid",
       policyCompliance: hasBlocking ? "blocked" : "unverified",
       releaseAuthorization: "not-authorized"
@@ -143,6 +143,7 @@ function validateShape(manifest) {
     if (isObject(spec.goal)) {
       if (!nonEmpty(spec.goal.statement)) errors.push({ ruleId: "SCHEMA-010", message: "Goal statement must be non-empty.", path: "$.spec.goal.statement" });
       if (!Array.isArray(spec.goal.acceptance_tests) || spec.goal.acceptance_tests.length === 0 || spec.goal.acceptance_tests.some((t) => !isObject(t) || !nonEmpty(t.id) || !nonEmpty(t.statement) || t.falsifiable !== true)) errors.push({ ruleId: "SCHEMA-011", message: "At least one acceptance test with id, statement, and falsifiable=true is required.", path: "$.spec.goal.acceptance_tests" });
+      else if (new Set(spec.goal.acceptance_tests.map((t) => t.id)).size !== spec.goal.acceptance_tests.length) errors.push({ ruleId: "REF-002", message: "Acceptance test IDs must be unique within a workflow manifest.", path: "$.spec.goal.acceptance_tests" });
       if (!Array.isArray(spec.goal.non_goals) || spec.goal.non_goals.length === 0 || spec.goal.non_goals.some((v) => !nonEmpty(v))) errors.push({ ruleId: "SCHEMA-012", message: "At least one explicit non-goal is required.", path: "$.spec.goal.non_goals" });
     }
     for (const key of ["inputs", "outputs"]) {
