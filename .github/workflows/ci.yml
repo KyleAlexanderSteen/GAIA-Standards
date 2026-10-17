@@ -31,3 +31,15 @@ jobs:
         run: python -m unittest standards/simulation/test_scenarios.py
       - name: Run simulation integration
         run: python standards/simulation/run_scenarios.py
+
+  verify:
+    name: Simulation verification
+    runs-on: ubuntu-latest
+    needs: [simulation]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Independent verification
+        run: python standards/simulation/verify.py
