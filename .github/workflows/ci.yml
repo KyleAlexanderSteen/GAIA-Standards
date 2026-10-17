@@ -19,16 +19,168 @@ jobs:
           node-version: 22
       - run: npm test
 
-  gaian-registry:
-    name: GAIAN Registry schema tests
+  templates:
+    name: Template integration
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run GAIAN registry validator tests
-        run: python -m unittest standards/gaian-registry/test_validate_record.py
+      - name: Validate templates
+        run: python standards/templates/validate_templates.py
+      - name: Run template unit tests
+        run: python -m unittest standards/templates/test_templates.py
+
+  templates-verify:
+    name: Template verification
+    runs-on: ubuntu-latest
+    needs: [templates]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Independent verification
+        run: python standards/templates/verify.py
+
+  stage-evidence:
+    name: Stage-evidence integration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run unit tests
+        run: python -m unittest standards/ci/test_stage_evidence_check.py
+      - name: Valid fixture must pass
+        run: python standards/ci/stage_evidence_check.py --body standards/ci/fixtures/valid_pr.md
+      - name: Invalid fixture must fail
+        run: |
+          if python standards/ci/stage_evidence_check.py --body standards/ci/fixtures/invalid_pr.md; then
+            echo "expected failure on invalid fixture"
+            exit 1
+          fi
+          echo "invalid fixture correctly rejected"
+
+  stage-evidence-verify:
+    name: Stage-evidence verification
+    runs-on: ubuntu-latest
+    needs: [stage-evidence]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Independent verification
+        run: python standards/ci/verify.py
+
+  simulation:
+    name: Simulation integration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run scenario structure tests
+        run: python -m unittest standards/simulation/test_scenarios.py
+      - name: Run simulation integration
+        run: python standards/simulation/run_scenarios.py
+
+  simulation-verify:
+    name: Simulation verification
+    runs-on: ubuntu-latest
+    needs: [simulation]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Independent verification
+        run: python standards/simulation/verify.py
+
+  standards-integration:
+    name: Standards integration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run available standards integrations
+        run: |
+          set -e
+          ran=0
+
+          if [ -f standards/templates/validate_templates.py ]; then
+            echo "=== templates integration ==="
+            python standards/templates/validate_templates.py
+            python -m unittest standards/templates/test_templates.py
+            ran=1
+          fi
+
+          if [ -f standards/ci/stage_evidence_check.py ]; then
+            echo "=== stage-evidence integration ==="
+            python -m unittest standards/ci/test_stage_evidence_check.py
+            if [ -f standards/ci/fixtures/valid_pr.md ]; then
+              python standards/ci/stage_evidence_check.py --body standards/ci/fixtures/valid_pr.md
+            fi
+            if [ -f standards/ci/fixtures/invalid_pr.md ]; then
+              if python standards/ci/stage_evidence_check.py --body standards/ci/fixtures/invalid_pr.md; then
+                echo "invalid fixture must fail"
+                exit 1
+              fi
+            fi
+            ran=1
+          fi
+
+          if [ -f standards/simulation/run_scenarios.py ]; then
+            echo "=== simulation integration ==="
+            python -m unittest standards/simulation/test_scenarios.py
+            python standards/simulation/run_scenarios.py
+            ran=1
+          fi
+
+          if [ "$ran" -eq 0 ]; then
+            echo "No standards integration entry points present on this branch; node tests still ran."
+          fi
+
+  verify:
+    name: CI verification
+    runs-on: ubuntu-latest
+    needs: [node, templates, stage-evidence, simulation, standards-integration]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirm workflow and package exist
+        run: |
+          test -f .github/workflows/ci.yml
+          test -f package.json
+          echo "CI verification: PASS"
+
+  five-domains:
+    name: Five-domains document tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run five-domains structure tests
+        run: python -m unittest docs/test_five_domains.py
+
+  five-domains-verify:
+    name: Five-domains verification
+    runs-on: ubuntu-latest
+    needs: [five-domains]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Independent verification
+        run: python docs/verify_five_domains.py
 
   gaian-registry:
     name: GAIAN Registry schema tests
