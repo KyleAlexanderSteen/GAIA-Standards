@@ -19,25 +19,22 @@ jobs:
           node-version: 22
       - run: npm test
 
-  python:
-    name: Python standards tests
+  stage-evidence:
+    name: Stage-evidence integration
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run available python tests
+      - name: Run unit tests
+        run: python -m unittest standards/ci/test_stage_evidence_check.py
+      - name: Valid fixture must pass
+        run: python standards/ci/stage_evidence_check.py --body standards/ci/fixtures/valid_pr.md
+      - name: Invalid fixture must fail
         run: |
-          set -e
-          ran=0
-          for dir in standards/templates standards/ci standards/simulation; do
-            if [ -d "$dir" ] && ls "$dir"/test_*.py >/dev/null 2>&1; then
-              echo "=== $dir ==="
-              python -m unittest discover -s "$dir" -p "test_*.py"
-              ran=1
-            fi
-          done
-          if [ "$ran" -eq 0 ]; then
-            echo "No python standards tests present on this branch; skipping."
+          if python standards/ci/stage_evidence_check.py --body standards/ci/fixtures/invalid_pr.md; then
+            echo "expected failure on invalid fixture"
+            exit 1
           fi
+          echo "invalid fixture correctly rejected"
