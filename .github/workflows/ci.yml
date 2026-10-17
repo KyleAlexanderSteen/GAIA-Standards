@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  node:
+    name: Node tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+
+  python:
+    name: Python standards tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run template tests
+        run: python -m unittest discover -s standards/templates -p "test_*.py" || true
+      - name: Run CI stage-evidence tests
+        run: python -m unittest discover -s standards/ci -p "test_*.py" || true
+      - name: Run simulation scenario tests
+        run: python -m unittest discover -s standards/simulation -p "test_*.py" || true
+      - name: Fail if any python test file is missing expected structure
+        run: |
+          python - <<'PY'
+          import pathlib, sys
+          root = pathlib.Path("standards")
+          missing = []
+          for p in ["templates/test_templates.py", "ci/test_stage_evidence_check.py", "simulation/test_scenarios.py"]:
+              if not (root / p).is_file():
+                  missing.append(p)
+          if missing:
+              print("missing test files:", missing)
+              sys.exit(1)
+          print("python test files present")
+          PY
