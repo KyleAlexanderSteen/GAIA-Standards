@@ -38,3 +38,15 @@ jobs:
             exit 1
           fi
           echo "invalid fixture correctly rejected"
+
+  verify:
+    name: Stage-evidence verification
+    runs-on: ubuntu-latest
+    needs: [stage-evidence]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Independent verification
+        run: python standards/ci/verify.py
