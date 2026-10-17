@@ -24,3 +24,9 @@ A simulation outcome is not verification by itself.
 
 - `reference_scenarios.json` — starter scenarios including one gap-linked refuse example.
 - Adopting repositories should copy or extend the runner pattern from the legacy tree.
+
+## Tests
+
+```bash
+python -m unittest standards/simulation/test_scenarios.py
+```
