@@ -1,0 +1,31 @@
+[
+  {
+    "id": "standards.refuse-unauthorized",
+    "seed": 1,
+    "gap_id": null,
+    "events": [
+      {"kind": "execute", "name": "authorized-action", "authorized": true},
+      {"kind": "execute", "name": "unauthorized-action", "authorized": false}
+    ],
+    "invariants": ["refused_action_never_executes"]
+  },
+  {
+    "id": "standards.failure-requires-recovery",
+    "seed": 7,
+    "gap_id": null,
+    "events": [
+      {"kind": "inject_failure", "name": "check"},
+      {"kind": "recover", "name": "explicit-recovery"}
+    ],
+    "invariants": ["failure_is_recorded", "recovery_is_explicit"]
+  },
+  {
+    "id": "standards.gap-linked-refuse",
+    "seed": 11,
+    "gap_id": "GAP-2026-002",
+    "events": [
+      {"kind": "refuse", "name": "unverified-tool-call"}
+    ],
+    "invariants": ["refused_action_never_executes"]
+  }
+]
