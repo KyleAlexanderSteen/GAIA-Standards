@@ -1,0 +1,72 @@
+{
+  "apiVersion": "gaia.dev/v999",
+  "kind": "WorkflowManifest",
+  "metadata": {
+    "id": "WF-EXAMPLE-002",
+    "name": "Invalid version fixture",
+    "version": "1.0.0",
+    "owner": "owner",
+    "domain": "general"
+  },
+  "spec": {
+    "scope": {
+      "exempt": false
+    },
+    "goal": {
+      "statement": "Invalid version",
+      "acceptance_tests": [
+        {
+          "id": "AT-1",
+          "statement": "Should fail closed",
+          "falsifiable": true
+        }
+      ],
+      "non_goals": [
+        "No release"
+      ]
+    },
+    "inputs": [
+      {
+        "id": "IN-1",
+        "schema_uri": "in.json",
+        "version": "1"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "OUT-1",
+        "schema_uri": "out.json",
+        "version": "1"
+      }
+    ]
+  },
+  "controls": {
+    "provenance": {
+      "applicable": true
+    },
+    "versioning": {
+      "applicable": true
+    },
+    "testing": {
+      "applicable": true
+    },
+    "security": {
+      "applicable": true
+    },
+    "privacy": {
+      "applicable": true
+    },
+    "human_approval": {
+      "applicable": true
+    },
+    "observability": {
+      "applicable": true
+    },
+    "resilience": {
+      "applicable": true
+    },
+    "learning": {
+      "applicable": true
+    }
+  }
+}

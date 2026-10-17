@@ -1,0 +1,47 @@
+{
+  "registryVersion": "0.1.0",
+  "status": "provisional-blocking-owner-decision",
+  "source": "GAIA-Documentation Universal Workflow Gate specification",
+  "controls": [
+    {
+      "id": "provenance",
+      "status": "listed-in-example"
+    },
+    {
+      "id": "versioning",
+      "status": "listed-in-example"
+    },
+    {
+      "id": "testing",
+      "status": "listed-in-example"
+    },
+    {
+      "id": "security",
+      "status": "listed-in-example"
+    },
+    {
+      "id": "privacy",
+      "status": "listed-in-example"
+    },
+    {
+      "id": "human_approval",
+      "status": "listed-in-example"
+    },
+    {
+      "id": "observability",
+      "status": "listed-in-example"
+    },
+    {
+      "id": "resilience",
+      "status": "listed-in-example"
+    },
+    {
+      "id": "learning",
+      "status": "listed-in-example"
+    }
+  ],
+  "unresolved": [
+    "GATE-01: specification requires ten control blocks but example supplies nine; safety/fairness appear elsewhere without a canonical inventory."
+  ],
+  "note": "Records only the nine blocks listed in the specification example; does not invent a missing control or imply owner approval."
+}

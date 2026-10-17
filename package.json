@@ -1,0 +1,14 @@
+{
+  "name": "gaia-workflow-gate-stage-a",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Deterministic local prototype for the GAIA Universal Workflow Gate; not a production release authority.",
+  "scripts": {
+    "test": "node --test",
+    "gate:validate": "node src/workflow-gate-cli.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
