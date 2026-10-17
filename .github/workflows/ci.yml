@@ -19,25 +19,15 @@ jobs:
           node-version: 22
       - run: npm test
 
-  python:
-    name: Python standards tests
+  simulation:
+    name: Simulation integration
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run available python tests
-        run: |
-          set -e
-          ran=0
-          for dir in standards/templates standards/ci standards/simulation; do
-            if [ -d "$dir" ] && ls "$dir"/test_*.py >/dev/null 2>&1; then
-              echo "=== $dir ==="
-              python -m unittest discover -s "$dir" -p "test_*.py"
-              ran=1
-            fi
-          done
-          if [ "$ran" -eq 0 ]; then
-            echo "No python standards tests present on this branch; skipping."
-          fi
+      - name: Run scenario structure tests
+        run: python -m unittest standards/simulation/test_scenarios.py
+      - name: Run simulation integration
+        run: python standards/simulation/run_scenarios.py
